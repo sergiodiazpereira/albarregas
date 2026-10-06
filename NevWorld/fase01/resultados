@@ -36,7 +36,7 @@ print('Numero de columnas: ', columnas)
 print('Nombre de las columnas: ', df.columns.tolist())
 print('Tipo del primer evento registrado: ', df['type'].iloc[0])
 print('Tipo de evento más frecuente y cantidad: ', df['type'].value_counts().index[0] , df['type'].value_counts().iloc[0])
-print('Todos los tipos de evento: ', df['type'].unique())
+print('Todos los tipos de evento: ', df['type'].value_counts())
 print('Run_id, semilla y versión del esquema de la primera fila: ', df['run_id'].iloc[0], df['seed'].iloc[0], df['schema_version'].iloc[0])
 print('Tick minimo y tick maximo: ', df['tick'].min(), df['tick'].max())
 print('Resultado de las validaciones: ', validacion)
@@ -54,11 +54,22 @@ print (df['type'].value_counts())
 | Nombres de las columnas |['schema_version', 'run_id', 'seed', 'event_index', 'tick', 'type', 'started_at_utc', 'building_id', 'building_type', 'cell_x', 'cell_y', 'width', 'height', 'villager_id', 'activity', 'resource_type', 'amount_before', 'amount_after', 'amount_delta', 'population', 'constructed_buildings', 'wood_stock', 'food_stock', 'gold_stock', 'day', 'prey_type', 'actor_id', 'target_id', 'interaction_type', 'topic', 'relationship_actor_to_target_after', 'relationship_target_to_actor_after', 'need_type', 'state', 'name', 'age', 'cause']|
 | Tipo del primer evento registrado |simulation_started|
 | Tipo de evento más frecuente y cantidad | villager_activity_changed 13444|
-| Recuento de todos los tipos de evento |['simulation_started' 'building_created' 'villager_activity_changed'
- 'resource_changed' 'world_snapshot' 'hunt_completed' 'social_interaction'
- 'villager_need_changed' 'construction_abandoned' 'villager_drank'
- 'construction_expired' 'villager_ate' 'villager_created' 'age_changed'
- 'villager_died']|
+| Recuento de todos los tipos de evento |
+villager_activity_changed    13444
+villager_need_changed         3816
+resource_changed              1756
+social_interaction            1482
+world_snapshot                1324
+villager_drank                 738
+villager_ate                   579
+construction_abandoned         162
+hunt_completed                  42
+construction_expired            40
+building_created                35
+villager_created                17
+simulation_started               1
+age_changed                      1
+villager_died                    1|
 | `run_id`, semilla y versión del esquema de la primera fila |20261005_182715_614258720572051651_ca6d7b46d1764244b20ee6f33780b54b 614258720572051712 2|
 | Tick mínimo y tick máximo |0 794900|
 | Resultado de las validaciones |OK|
