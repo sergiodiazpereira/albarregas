@@ -1,0 +1,76 @@
+from pathlib import Path
+
+import pandas as pd
+
+
+DATASET = Path(
+    'data/raw/nevworld_614258720572051651_20261005_182715.jsonl'
+)
+
+if not DATASET.exists():
+    raise FileNotFoundError(
+        'No se encuentra: {DATASET.resolve()}'
+    )
+
+df = pd.read_json(DATASET, lines=True)
+required = [
+    'run_id', 'event_index', 'tick', 'type'
+]
+
+assert not df.empty, 'El dataset está vacío'
+assert all(column in df.columns for column in required), \
+    'Faltan columnas principales'
+assert not df.duplicated(['run_id', 'event_index']).any(), \
+    'Hay eventos duplicados'
+
+ordered = df.sort_values('event_index')
+assert ordered['tick'].is_monotonic_increasing, \
+    'Los ticks retroceden'
+
+validacion = 'OK'
+
+filas, columnas = df.shape
+print('\nNombre del archivo JSONL: ', df['run_id'].iloc[0])
+print('Numero total de eventos: ', filas)
+print('Numero de columnas: ', columnas)
+print('Nombre de las columnas: ', df.columns.tolist())
+print('Tipo del primer evento registrado: ', df['type'].iloc[0])
+print('Tipo de evento más frecuente y cantidad: ', df['type'].value_counts().index[0] , df['type'].value_counts().iloc[0])
+print('Todos los tipos de evento: ', df['type'].unique())
+print('Run_id, semilla y versión del esquema de la primera fila: ', df['run_id'].iloc[0], df['seed'].iloc[0], df['schema_version'].iloc[0])
+print('Tick minimo y tick maximo: ', df['tick'].min(), df['tick'].max())
+print('Resultado de las validaciones: ', validacion)
+print (df['type'].value_counts())
+
+
+
+
+
+| Dato de mi partida | Resultado |
+| --- | --- |
+| Nombre del archivo JSONL |nevworld_614258720572051651_20261005_182715|
+| Número total de eventos |23438|
+| Número de columnas |37|
+| Nombres de las columnas |['schema_version', 'run_id', 'seed', 'event_index', 'tick', 'type', 'started_at_utc', 'building_id', 'building_type', 'cell_x', 'cell_y', 'width', 'height', 'villager_id', 'activity', 'resource_type', 'amount_before', 'amount_after', 'amount_delta', 'population', 'constructed_buildings', 'wood_stock', 'food_stock', 'gold_stock', 'day', 'prey_type', 'actor_id', 'target_id', 'interaction_type', 'topic', 'relationship_actor_to_target_after', 'relationship_target_to_actor_after', 'need_type', 'state', 'name', 'age', 'cause']|
+| Tipo del primer evento registrado |simulation_started|
+| Tipo de evento más frecuente y cantidad | villager_activity_changed 13444|
+| Recuento de todos los tipos de evento |['simulation_started' 'building_created' 'villager_activity_changed'
+ 'resource_changed' 'world_snapshot' 'hunt_completed' 'social_interaction'
+ 'villager_need_changed' 'construction_abandoned' 'villager_drank'
+ 'construction_expired' 'villager_ate' 'villager_created' 'age_changed'
+ 'villager_died']|
+| `run_id`, semilla y versión del esquema de la primera fila |20261005_182715_614258720572051651_ca6d7b46d1764244b20ee6f33780b54b 614258720572051712 2|
+| Tick mínimo y tick máximo |0 794900|
+| Resultado de las validaciones |OK|
+
+Termina la ficha respondiendo con tus palabras:
+
+1. ¿Qué te permite afirmar el recuento sobre tu partida? ¿Por qué el tipo más frecuente no tiene que ser el más importante?
+Ha sido una partida extensa de muchos ticks y bastante próspera debido al bajo número de fallecimientos. 
+Porque hay tipos que pueden suceder en el juego más frecuentemente (como el cambio de actividad o necesidad de los aldeanos), y otros más inusuales y a la vez más determinantes (como el fallecimiento de los aldeanos "villager_died")
+
+2. ¿Por qué una celda vacía no significa necesariamente que el registro esté mal?
+ Porque pueden existir filas cuyas caracteristicas causen o requieran tener más columnas que otras filas, por lo que estas otras filas no tendrán ningun valor en esas columnas
+
+3. ¿Qué sabes ahora del archivo y qué pregunta sobre tu partida necesitaría un análisis posterior?
+¿Porqué hubo un sólo registro de un aldeano fallecido?
